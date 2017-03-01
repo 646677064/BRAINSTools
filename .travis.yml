@@ -1,0 +1,38 @@
+# use containers
+sudo: false
+
+os:
+  - linux
+  - osx
+
+language: cpp
+
+cache: ccache
+
+compiler:
+  - clang
+  - gcc
+
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+    packages:
+      - cmake
+      - cmake-data
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ];  then echo "need cmake 3.2"; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update && brew install ccache; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
+  - mkdir bt-bld
+  - cd bt-bld
+
+script:
+#  - cmake -DCMAKE_CXX_STANDARD:STRING=11  ./.. && make -j 2 && cd BRAINSTools-build/ && make test
+  - cmake ./.. && make -j 2 && cd BRAINSTools-build/ && make test
+
+notifications:
+  email:
+    recipients:
+      - hans-johnson@uiowa.edu
